@@ -10,6 +10,7 @@
             "request": "launch",
             "program": "${file}",
             // "python": "/cygdrive/c/Users/lithiumice/.platformio/penv/Scripts/python",
+            // "python": "C:/Users/huali/miniconda3/envs/leetcode/python.exe",
             "console": "integratedTerminal"
         }
     ]
