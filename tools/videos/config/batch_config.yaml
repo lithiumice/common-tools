@@ -1,0 +1,7 @@
+
+input_directory:
+output_directory:
+
+video_size:
+  width: 640
+  height: 480

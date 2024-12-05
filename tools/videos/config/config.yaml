@@ -1,0 +1,17 @@
+# conf/config.yaml
+
+input_videos:
+  - /path/to/video1.mp4
+  - /path/to/video2.mp4
+  - /path/to/video3.mp4
+  - /path/to/video4.mp4
+
+output_path: output_grid.mp4
+
+grid:
+  rows: 2
+  cols: 2
+
+video_size:
+  width: 640
+  height: 480
