@@ -51,15 +51,15 @@ def split_video_scenes(
             show_progress=True
         )
         
-        # # 保存缩略图
-        # if save_thumbnails:
-        #     thumb_dir = os.path.join(output_dir, "thumbnails")
-        #     os.makedirs(thumb_dir, exist_ok=True)
-        #     save_images(
-        #         scenes,
-        #         video_path,
-        #         thumb_dir,
-        #     )
+        # 保存缩略图
+        if save_thumbnails:
+            thumb_dir = os.path.join(output_dir, "thumbnails")
+            os.makedirs(thumb_dir, exist_ok=True)
+            save_images(
+                scenes,
+                video_path,
+                thumb_dir,
+            )
             
         return scenes
         

@@ -1,5 +1,7 @@
 debug*
 output*
-
+tmp*
+temp*
+*.pyc
 
 .vscode/PythonImportHelper-v2-Completion.json
