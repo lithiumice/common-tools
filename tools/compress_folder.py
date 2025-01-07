@@ -2,6 +2,8 @@ import os
 import zipfile
 from datetime import datetime
 from tqdm import tqdm
+import shutil
+
 
 def compress_folders(root_dir):
     # 获取所有子文件夹
@@ -32,6 +34,12 @@ def compress_folders(root_dir):
         
         print(f"Compressed: {zip_filename}")
         # break
+        
+        shutil.rmtree(folder_path)
+        
+        print(f"Deleted: {folder}")
+        
+        
 
 # 使用示例
 root_directory = r"D:\6 嵌入式项目"
