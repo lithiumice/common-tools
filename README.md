@@ -1,5 +1,5 @@
 
-# Tools
+# Python Tools
 
 ## Env
 conda activate base
@@ -23,8 +23,7 @@ pip install --upgrade scenedetect[opencv]
 ## Run
 python tools\compress_folder.py
 
-python tools\pyscenedetect_clip.py input_video output \
-    --threshold 6 --min-scene-len 10 --save-thumbnails
+python tools\pyscenedetect_clip.py input_video output --threshold 6 --min-scene-len 10 --save-thumbnails
 
 pip install bs4 requests
 python "tools\banfo_biaoqingbao.py"
