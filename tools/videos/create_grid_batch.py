@@ -7,7 +7,7 @@ from typing import List
 import math
 from tqdm import tqdm
 
-import sys; sys.path.append(r"C:\Users\huali\Desktop\1_Work\10_daily_tools")
+import sys; sys.path.append(os.getcwd())
 
 # 导入之前创建的video grid maker中的函数
 from tools.videos.create_grid import (
@@ -36,10 +36,11 @@ def chunk_videos(video_files: List[str], chunk_size: int) -> List[List[str]]:
     """将视频文件列表分成固定大小的组"""
     return [video_files[i:i + chunk_size] for i in range(0, len(video_files), chunk_size)]
 
-# @hydra.main(config_path="config", config_name="batch_grid", version_base=None)
-# def process_directory(cfg: DictConfig) -> None:
+
+
+@hydra.main(config_path="conf", config_name="batch_grid", version_base=None)
+def process_directory(cfg: DictConfig) -> None:
     
-def process_directory() -> None:
     """
     处理目录中的所有视频文件，每4个视频创建一个2x2网格
     配置文件应包含:
@@ -50,21 +51,15 @@ def process_directory() -> None:
         - height: 每个视频的高度
     """
     from omegaconf import DictConfig
-    cfg = DictConfig({
-        "video_size": {
-            "width": 640,
-            "height": 480,
-        },
-        # "input_directory": r"c:\Users\huali\Desktop\1_Work\1_毕业论文\1_论文材料\2 MoCap Benchmark\8 100ways\100ways-combined_videos-20241121\3 combined_videos",
-        # "output_directory": r"c:\Users\huali\Desktop\1_Work\1_毕业论文\1_论文材料\2 MoCap Benchmark\8 100ways\100ways-combined_videos-20241121\3_combined_videos_2x2grids"
-        
-        # "input_directory": r"c:\Users\huali\Desktop\1_Work\1_毕业论文\4_投稿记录\3 CVPR\3 intro视频\2_videos\2_DiffGen\Tiny-100STYLES",
-        # "output_directory": r"c:\Users\huali\Desktop\1_Work\1_毕业论文\4_投稿记录\3 CVPR\3 intro视频\2_videos\2_DiffGen\Tiny-100STYLES-grid"
+    # cfg = DictConfig({
+    #     "video_size": {
+    #         "width": 640,
+    #         "height": 480,
+    #     },
+    #     "input_directory": r"x",
+    #     "output_directory": r"x"
             
-        "input_directory": r"c:\Users\huali\Desktop\1_Work\1_毕业论文\4_投稿记录\3 CVPR\3 intro视频\2_videos\2_DiffGen\Tiny-100STYLES+LOCO-3w",
-        "output_directory": r"c:\Users\huali\Desktop\1_Work\1_毕业论文\4_投稿记录\3 CVPR\3 intro视频\2_videos\2_DiffGen\Tiny-100STYLES+LOCO-3w-grid"
-            
-    })
+    # })
     try:
         # 创建输出目录
         os.makedirs(cfg.output_directory, exist_ok=True)

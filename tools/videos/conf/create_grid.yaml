@@ -1,0 +1,16 @@
+# conf/config.yaml
+
+input_videos:
+  - c:/Users/huali/Desktop/1_Work/1_毕业论文/11-SHOW整理/论文材料/论文视频材料/整理/input-init-mica-mediepipe-deeplab.mp4
+  - c:/Users/huali/Desktop/1_Work/1_毕业论文/11-SHOW整理/论文材料/论文视频材料/整理/split/SHOW结果.mp4
+
+
+output_path: output_grid.mp4
+
+grid:
+  rows: 2
+  cols: 2
+
+video_size:
+  width: 640
+  height: 480
