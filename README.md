@@ -13,11 +13,30 @@ conda activate universe
 Install
 ```
 pip install -r requirements.txt
+conda activate base
 pip install scenedetect
 pip install --upgrade scenedetect[opencv]
 pip install hydra-core
+```
+
+Linux
 
 ```
+export https_proxy=http://127.0.0.1:7890
+export http_proxy=http://127.0.0.1:7890
+export all_proxy=socks5://127.0.0.1:7890
+```
+
+Windows
+
+```
+set https_proxy=http://127.0.0.1:7890
+set http_proxy=http://127.0.0.1:7890
+set all_proxy=socks5://127.0.0.1:7890
+```
+
+
+
 
 ## Run
 
@@ -39,4 +58,10 @@ python tools/images/cut_white.py "c:\Users\huali\Desktop\1_Work\1_毕业论文\3
 create paper image grid
 ```
 python tools/images/create_grid.py "output/cut_white_0403" -r 6 -c 8
+```
+
+pictures scrawper
+```
+pip install bs4 requests
+python "tools\banfo_biaoqingbao.py"
 ```
