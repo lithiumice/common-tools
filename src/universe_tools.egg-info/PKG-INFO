@@ -1,3 +1,22 @@
+Metadata-Version: 2.4
+Name: universe-tools
+Version: 0.1.0
+Summary: Add your description here
+Requires-Python: >=3.12
+Description-Content-Type: text/markdown
+Requires-Dist: fastapi>=0.115.12
+Requires-Dist: grpcio>=1.50.0
+Requires-Dist: grpcio-tools>=1.50.0
+Requires-Dist: numpy>=1.20.0
+Requires-Dist: pip>=25.0.1
+Requires-Dist: pyaudio>=0.2.13
+Requires-Dist: requests>=2.32.3
+Requires-Dist: sounddevice>=0.5.1
+Requires-Dist: torch>=2.6.0
+Requires-Dist: torchaudio>=2.6.0
+Requires-Dist: uvicorn>=0.34.0
+Requires-Dist: websockets>=15.0.1
+
 
 # Python Tools
 
@@ -64,9 +83,4 @@ pictures scrawper
 ```
 pip install bs4 requests
 python "tools\banfo_biaoqingbao.py"
-```
-
-```
-cd src/sync_code/RLM/audio_streamer/
-python audio_streamer.py
 ```

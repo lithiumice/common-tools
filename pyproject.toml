@@ -1,17 +1,29 @@
 [project]
-name = "Tools"
+name = "universe-tools"
 version = "0.1.0"
-description = ""
-authors = [
-    {name = "lithiumice",email = "fthualinliang@mail.scut.edu.cn"}
-]
+description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 dependencies = [
-    "seaborn (>=0.13.2,<0.14.0)"
+    "fastapi>=0.115.12",
+    "grpcio>=1.50.0",
+    "grpcio-tools>=1.50.0",
+    "numpy>=1.20.0",
+    "pip>=25.0.1",
+    "pyaudio>=0.2.13",
+    "requests>=2.32.3",
+    "sounddevice>=0.5.1",
+    "torch>=2.6.0",
+    "torchaudio>=2.6.0",
+    "uvicorn>=0.34.0",
+    "websockets>=15.0.1",
 ]
-
 
 [build-system]
-requires = ["poetry-core>=2.0.0,<3.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["setuptools>=67.0.0"]
+build-backend = "setuptools.build_meta"
+
+[[tool.uv.index]]
+name = "pytorch-cu124"
+url = "https://download.pytorch.org/whl/cu124"
+explicit = true
