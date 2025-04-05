@@ -6,3 +6,8 @@ temp*
 
 .vscode/PythonImportHelper-v2-Completion.json
 *.log
+*.egg-info
+src/universe_tools.egg-info/requires.txt
+src/universe_tools.egg-info/PKG-INFO
+src/universe_tools.egg-info/SOURCES.txt
+uv.lock

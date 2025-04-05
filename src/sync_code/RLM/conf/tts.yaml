@@ -1,0 +1,15 @@
+# conf/config.yaml
+tts:
+  api_url: "http://10.11.106.128:50000/inference_instruct2_liang"
+  instruct_text: "冷静闷骚高冷酷女"
+  target_sr: 22050
+  debug: false
+  debug_dir: "debug"
+
+server:
+  websocket_port: 50001
+  websocket_host: "localhost"
+  fastapi_port: 50002
+  fastapi_host: "0.0.0.0"
+  run_websocket: false
+  run_fastapi: true
