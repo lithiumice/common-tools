@@ -9,7 +9,7 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-@hydra.main(config_path="conf", config_name="config", version_base=None)
+@hydra.main(config_path="conf", config_name="create_grid", version_base=None)
 def create_video_grid(cfg: DictConfig) -> None:
     """
     使用FFmpeg创建视频网格

@@ -1,0 +1,10 @@
+scenedetect[opencv]
+hydra-core
+ray
+scikit-learn
+scipy
+tqdm
+opencv-python
+numpy
+pandas
+matplotlib

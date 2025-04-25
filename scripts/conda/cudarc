@@ -1,0 +1,14 @@
+
+# 设置CUDA HOME环境变量，用于pytorch编译包
+export CUDA_HOME="C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.1"
+# export LD_LIBRARY_PATH=$CUDA_HOME/${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CUDA_HOME/lib64:$CUDA_HOME/extras/CUPTI/lib64
+export PATH=$CUDA_HOME/bin:$CUDA_HOME/libnvvp:$PATH
+# export PATH=$CUDA_HOME/bin${PATH:+:${PATH}}
+export PATH=$PATH:$CUDA_HOME/bin:$CUDA_HOME/libnvvp
+
+# source "C:/Users/huali/miniconda3/etc/profile.d/conda.sh"
+# source "C:/Users/huali/.bash_profile"
+# source "C:/Users/huali/.profile"
+
+echo "Initialization done."
