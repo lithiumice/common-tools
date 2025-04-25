@@ -1,9 +1,0 @@
-
-# 添加以下内容（根据你的具体安装路径调整）
-# export PATH=$PATH:C:/Users/lithiumice/miniconda3/condabin
-export PATH="/c/Users/$USER/miniconda3/Scripts:$PATH"
-export PATH="/c/Users/$USER/miniconda3:$PATH"
-
-# 添加 conda 初始化
-eval "$('/c/Users/$USER/miniconda3/Scripts/conda.exe' 'shell.bash' 'hook')"
-

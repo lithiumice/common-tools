@@ -45,5 +45,5 @@ def compress_folders(root_dir):
         
 
 # 使用示例
-root_directory = r"D:\6 嵌入式项目"
+root_directory = r"D:\毕设代码\1 修改过的代码"
 compress_folders(root_directory)
