@@ -1,0 +1,97 @@
+% \documentclass{article}
+% \usepackage{markdown}
+% \begin{document}
+% \begin{markdown}
+
+% \documentclass{article}
+\documentclass[UTF8]{ctexart}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{rebuttal}
+
+\title{$title$}
+% \author{$author$}
+
+\begin{document}
+
+\maketitle
+
+
+\section*{Human Motion Trajectory Representation and Transformations}
+
+\subsection*{Preliminaries}
+The heading vector of a person points towards where the person is facing and is parallel to the ground. We obtain this heading vector by aligning the $z$-axis of the person's root coordinate with the world $z$-axis and using the resulting $y$-axis as the heading vector. This approach is more stable than using Euler angles, which can suffer from singularities.
+
+\subsection*{Global and Egocentric Representations}
+Given an occlusion-free body motion $\Theta^i$ for each person, we aim to recover their global trajectory $(\vec{T}^i, \vec{R}^i)$. This is achieved through a global trajectory predictor $\mathcal{T}$ that processes general body motion $\Theta = (\theta_1,\ldots,\theta_m)$ to output global trajectory $(T, R)$, where:
+\begin{itemize}
+    \item $T = (\tau_1,\ldots,\tau_m)$ represents root translations
+    \item $R = (\gamma_1,\ldots,\gamma_m)$ represents rotations
+\end{itemize}
+
+To handle trajectory ambiguity, we formulate the predictor using a CVAE:
+\begin{align}
+    \Psi &= \mathcal{T}(\Theta,v) \tag{1} \\
+    (T, R) &= \text{EgoToGlobal}(\Psi) \tag{2}
+\end{align}
+where $v$ is the CVAE latent code.
+
+\subsection*{Egocentric Trajectory Representation}
+The egocentric trajectory $\Psi$ provides an alternative representation of the global trajectory $(T, R)$ with several advantages:
+\begin{itemize}
+    \item Converts global trajectory into relative local differences
+    \item Represents rotations and translations in heading coordinates ($y$-axis aligned with facing direction)
+    \item Invariant to absolute $xy$ translation and heading
+    \item More suitable for long trajectory prediction due to local frame-by-frame changes
+\end{itemize}
+
+For each time step $t$, the egocentric trajectory component $\psi_t = (\delta x_t, \delta y_t, z_t, \delta\phi_t, \eta_t)$ is computed as:
+\begin{align}
+    (\delta x_t, \delta y_t) &= \text{ToHeading}(\tau^{xy}_t - \tau^{xy}_{t-1}) \tag{3} \\
+    z_t &= \tau^z_t, \quad \delta\phi_t = \gamma^h_t - \gamma^h_{t-1} \tag{4} \\
+    \eta_t &= \text{ToHeading}(\gamma_t) \tag{5}
+\end{align}
+
+where:
+\begin{itemize}
+    \item $\tau^{xy}_t$ is the horizontal translation component
+    \item $\tau^z_t$ is the height component
+    \item $\gamma^h_t$ is the heading angle
+    \item $\eta_t$ is the local rotation (using 6D representation to avoid discontinuity)
+\end{itemize}
+
+\subsection*{Coordinate Transformations}
+
+\subsubsection*{Global to Local Transformation}
+Given global coordinates $(\mathbf{T} = [\mathbf{xy}, z], \mathbf{q})$, the local transformation proceeds as:
+\begin{align}
+    \mathbf{q}' &= \mathbf{q} \otimes \mathbf{q}_{\text{base}}^* \\
+    \theta &= \text{getHeading}(\mathbf{q}') \\
+    \mathbf{q}_h &= \text{getHeadingQuaternion}(\mathbf{q}') \\
+    \mathbf{q}_l &= \text{deheadingQuaternion}(\mathbf{q}', \mathbf{q}_h) \\
+    \mathbf{R}_l &= \text{quaternionToRot6D}(\mathbf{q}_l) \\
+    \Delta\mathbf{xy}_{\text{local}} &= \text{rot2D}(\mathbf{xy}_{t+1} - \mathbf{xy}_t, -\theta_t)
+\end{align}
+
+\subsubsection*{Local to Global Transformation}
+Given local coordinates $\mathbf{\Psi} = [\Delta\mathbf{xy}_{\text{local}}, z, \mathbf{R}_l, \mathbf{v}_{\theta}]$, the global transformation is:
+\begin{align}
+    \theta_{\text{global}} &= \sum_{t=0}^T \text{vectorToHeading}(\mathbf{v}_{\theta}) \\
+    \mathbf{xy} &= \sum_{t=0}^T \text{rot2D}(\Delta\mathbf{xy}_{\text{local}}, \theta_{\text{global}}) \\
+    \mathbf{q} &= \text{headingToQuaternion}(\theta_{\text{global}}) \otimes \text{rot6DToQuaternion}(\mathbf{R}_l) \otimes \mathbf{q}_{\text{base}}
+\end{align}
+
+\subsection*{Implementation Notes}
+\begin{itemize}
+    \item Initial values $(\delta x_0, \delta y_0)$ and $\delta\phi_0$ store starting position and heading
+    \item Training uses ground truth initial values; inference allows arbitrary starting conditions
+    \item Trajectory drift correction is handled through video evidence matching
+    \item All quaternion operations maintain unit normalization
+    \item The 6D rotation representation prevents discontinuities in rotation sequences
+\end{itemize}
+
+
+% \end{markdown}
+% \end{document}
+
+\end{document}

@@ -1,0 +1,246 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{rebuttal}
+\usepackage{graphicx}
+\usepackage{caption}
+
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{listings}
+% \usepackage[ruled,vlined]{algorithm2e}
+
+\newcommand{\COMMENT}[1]{{   // #1}}
+\title{Response to Reviewer}
+% \author{}
+
+\begin{document}
+
+\maketitle
+
+\section{Response to Reviewer kh4z}\label{response-to-reviewer-kh4z}
+
+We sincerely appreciate your recognition of our work's strengths and insightful suggestions. Here we respond to each of your comments in detail below.
+
+
+
+\subsection{W1: Dataset Curating Details}\label{w1-dataset-curating-details}
+A: Thanks for pointing out that. We have drawn a pipeline for the entire process of data processing \ref{fig:fig_data_process_pipeline}, and we are working on compiling more data on these processes, such as time consumption, speed, and the distribution of the final data, including gender, race, action style, etc. We will provide more detailed records and statistics on the process of constructing and processing the dataset. At the same time, we will add more cross experiments to the dataset to verify its effectiveness. 
+% {[}IMPORTANT, add evidence of dataset diversity{]}
+
+\subsection{W2: The Need of Finetuning}\label{w2-the-need-of-finetuning}
+
+A: The only control signal input during the pretrain process is the trajectory, and we speculate that the generation in this part of the pretrain will tend towards mean motion. In the fine-tuning process, one hot embedding of style is added to achieve strong style control, so we can see obvious style features.
+
+\subsection{W3: Licenses of Online Videos}\label{w3-licenses-of-online-videos}
+
+A: When using videos, we only extracted the motion of the people in the video without information such as clothes, faces, etc., which eliminates the invasion of privacy. We handle this part more cautiously when publishing the dataset.
+
+\subsection{Q1: Result of Pretraining on LOCO.}\label{q1-result-of-pretraining-on-loco.}
+
+A1: The last row in Table 3 represents pretraining and fine-tuning on the LOCO dataset. The evaluator used in the evaluation process was trained on 100STYLES, so it is not possible to directly evaluate the metrics of the pretrain model. But you can see qualitative results of on pretraining on LOCO dataset illustrated in supplementary video(at 1m26s).
+
+\subsection{Q2: ``WHAM overlooks the ambiguity of this task'' Explanation.}\label{q2-wham-overlooks-the-ambiguity-of-this-task-explanation.}
+
+A2: Thanks for pointing out the unclear expression in the article. We will fix it. There exists ambiguity in human pose estimation in monocular images and videos, such as depth ambiguity, where there is a probability distribution. But WHAM uses a deterministic model for prediction, which may not be as effective as probabilistic modeling models.
+
+\section{Response to Reviewer PXUu}\label{response-to-reviewer-pxuu}
+
+We sincerely appreciate your recognition of our work's strengths and helpful suggestions. Here we respond to each of your comments in detail below.
+
+\subsection{W1: Contribution of this work}\label{w1-contribution-of-this-work}
+
+A: The motivation of our work is actually quite clear: in order to capture high-quality motion data from videos, we need to build a reasonable system: although WHAM is the SOTA of pose estimation, it estimates the trajectory of uneven ground, and its system uses deterministic models to model, ignoring the depth ambiguity problem in monocular videos. Therefore, we propose the camera aware DiffTraj to obtain a better global trajectory. In order to further obtain motion that conforms to physical laws, we use motion estimation technology for physical correction. At the same time, in practical applications, we found that this step complements the previous steps, and predicting a more reasonable trajectory can better assist estimation.
+
+\subsection{W4: Limitation of our work.}\label{w4-limitation-of-our-work.}
+
+A: Sorry that we forgot to include the chapter on limitations. Here we supplement the Limitation section: 1. At present, no text labels have been added during the initial construction of the dataset. Using LLM to do pseudo labeling is an easy idea. It is feasible to use existing work like MotionLLM to describe it in text from video (video caption task) or motion (motion to text task) directly. We leave it for future work. 2. The verification and filtering of large-scale datasets is a very complex and difficult task, and we believe that this is also an important factor that constrains the final effectiveness of our work.
+
+\subsection{Q2\&W2: Detail of motion imitation.}\label{q2w2-detail-of-motion-imitation.}
+
+A2: The aproach of our motion imitation is similar to \href{https://arxiv.org/abs/2104.00683}{SimPoE}. The task of controlling the character agent in a physically simulated environment to mimic reference motions can be formulated as a Markov decision process (MDP), defined by a tuple $M=(S,A,\tau,r,\gamma)$ of states, actions, transition dynamics, a reward function, and a discount factor. We first initialize the state of the simulated character $s_0$ to be the same initial state of the reference motion. Starting from $s_0$, the agent iteratively samples actions $a_t \in A$ according to a policy $\pi(a_t | s_t)$ at each state $s_t \in S$. The environment then transitions to the next state $s_{t+1}$ according to the transition dynamics $T(s_{t+1} | s_t, a_t)$, and then outputs a scalar reward $r_t$ for that transition. The reward is computed based on how well the simulated motion aligns with the reference motion. The goal of this learning process is to learn an optimal policy $\pi*$ that maximizes the expected return $J(\pi) = E_\pi[\sum_t(\gamma^tr_t)]$. Next, we describe the details of the state, action, and reward function, as well as training strategy of the low-level policy.
+
+(From previous WHAM+DiffTraj step we can get estimated body shape parameters $\beta$ and body motion $\mathbb{M}_{kin}$.)
+
+\subsubsection{States}\label{states}
+
+The simulated character model is created based on the SMPL format, with body shape parameters $\beta$. The character consists of 24 rigid bodies and 72 degrees of freedom. We use the following features to represent the character state $s_t = (p_t, \dot{p}_t, q_t, \dot{q}_t, \hat{p}_{t+1}, \hat{q}_{t+1})$:
+
+\begin{itemize}
+\tightlist
+\item
+  $p_t$: joint positions in the character's root coordinates
+\item
+  $\dot{p}_t$: joint linear velocities in the character's root coordinates
+\item
+  $q_t$: joint rotations in the joints' local coordinates
+\item
+  $\dot{q}_t$: joint angular velocities in the joints' local coordinates
+\item
+  $\hat{p}_{t+1}$: target (kinematic) joint positions
+\item
+  $\hat{q}_{t+1}$: target (kinematic) joint rotations
+\end{itemize}
+
+\subsubsection{Actions}\label{actions}
+
+Similar to many prior systems \href{https://arxiv.org/abs/2104.00683}{SimPoE}, \href{https://research.nvidia.com/labs/toronto-ai/vid2player3d/data/tennis_skills_main.pdf}{tennis2player} \href{https://github.com/ZhengyiLuo/EmbodiedPose}{EmbodiedPose}, we use proportional derivative (PD) controllers at each non-root joint to produce torques for actuating the character's body. The action $a_t$ specifies the target joint angles $u_t$ for the PD controllers. At each simulation step, the joint torques $\tau_t$ are computed as: \[\tau_t = k_p \cdot (u_t - q_t^{nr}) - k_d \cdot \dot{q}_t^{nr}\] where $k_p$ and $k_d$ denote the parameters of the PD controllers that determine the stiffness and damping of each joint, $q_t^{nr}$ and $\dot{q}_t^{nr}$ are the joint rotations and angular velocities of the non-root joints. To improve tracking performance on highly agile motions, we also allow the policy to apply external residual forces to the root \href{https://github.com/Khrylx/RFC}{RFC}. Therefore, the actions also include residual forces and torques $\eta_t$ for the root joint, and each action is defined as $a_t = (u_t, \eta_t)$.
+
+\subsubsection{Rewards}\label{rewards}
+
+The reward function is designed to encourage the policy to closely track the reference motion while also minimizing energy expenditure. The reward consists of four terms:
+
+\[r_t = \omega_0 r_t^0 + \omega_v r_t^v + \omega_p r_t^p + + \omega_e r_t^e\]
+
+\begin{itemize}
+\tightlist
+\item
+  The joint rotation reward $r_t^0$ measures the difference between the local joint rotations of the simulated character $q_t^{j}$ and the reference motion $\hat{q}_t^{j}$:
+\end{itemize}
+
+\[ r_t^0 = \exp \left[ -\alpha_0 \sum_j \left( \| \Theta (q_t^{j}, \hat{q}_t^{j}) \|^2 \right) \right]\]
+
+where $\Theta$ denotes the geodesic distance between two rotations.
+
+\begin{itemize}
+\tightlist
+\item
+  The velocity reward $r_t^v$ measures the mismatch between local joint velocities of the simulated motion $\dot{q}_t^{j}$ and the reference motion $\dot{\hat{q}}_t^{j}$:
+\end{itemize}
+
+\[ r_t^v = \exp \left[ -\alpha_0 \sum_j \left( \| \dot{q}_t^{j} - \dot{\hat{q}}_t^{j} \|^2 \right) \right]\]
+
+\begin{itemize}
+\tightlist
+\item
+  The joint position reward $r_t^p$ encourages the 3D world joint positions $x_t^{j}$ (including the root joint) to match the reference motion $\hat{x}_t^{j}$:
+\end{itemize}
+
+\[ r_t^p = \exp \left[ -\alpha_p \sum_j \left( \| x_t^{j} - \hat{x}_t^{j} \|^2 \right) \right]\]
+
+\begin{itemize}
+\tightlist
+\item
+  Finally, the reward $r_t^e$ denotes the power penalty computed as:
+\end{itemize}
+
+\[ r_t^e = -\sum_j \left( \| \dot{q}_t^{j} \cdot \tau_t^{j} \|^2 \right)\]
+
+where $\tau_t^{j}$ is the internal torque applied on the joint $j$. The weight and scale factor for each reward term is manually specified and kept the same.
+
+\subsubsection{Training}\label{training}
+
+The training of the low-level policy is conducted in two stages. 1. In the first stage, we train the policy with a existing high-quality MoCap database AMASS to learn to imitate general motions. In this stage, we use data augmentation (changing the fps of training motion data) to make low-level policies more robust to fast-moving motions, while improving the success rate of imitation (success rate from 80\% to 81.8\%). 2. finetuning the policy using $\mathbb{M}_{kin}$ would get better tacking results and body alignment.
+
+All physics simulations are implemented using \href{https://developer.nvidia.com/isaac-gym}{Issac Gym}. All policies are implemented as neural networks using PyTorch and trained using \href{https://arxiv.org/pdf/1707.06347}{Proximal Policy Optimization (PPO)}. In our experiments, the vitual simulated environments number is set to 40960 to maximize the usage of GPU memory, the training of low-level for 1w epoches requires around 24 hours on a single NVIDIA RTX A100 GPU.
+
+\subsection{Q3\&W2: Detail of DiffTraj.}\label{q3w2-detail-of-difftraj.}
+
+A3: Sorry for the simplified description of this part in paper, we will fix it in future version.
+
+\subsubsection{Preliminaries}\label{preliminaries}
+
+A Diffusion Model (DM) learns a diffusion process that generates a probability distribution for a given dataset. In the case of generation tasks, a neural network of DM is trained to reverse the process of adding noise to real data so new data can be progressively generated starting from random noise. For a data sample $\mathbf{x} \sim p_{\text{data}}$ from a specific data distribution $p_{\text{data}}$, the forward diffusion process is defined as a fixed Markov Chain that gradually adds Gaussian noise to the data as follows:
+
+\[
+q(\mathbf{x}_t \mid \mathbf{x}_{t-1}) = \mathcal{N}(\mathbf{x}_t; \sqrt{1 - \beta_t}\mathbf{x}_{t-1}, \beta_t\mathbf{I})
+\]
+
+for $t = 1, \ldots, T$, where $T$ is the number of perturbing steps and $\mathbf{x}_t$ represents noisy data after adding $t$ steps of noise on the real data $\mathbf{x}_0$. This process is controlled by a sequence schedule $\beta_t$ which is parameterized by the noising step $t$. Following the closure of normal distribution, $\mathbf{x}_t$ can be directly computed with $\mathbf{x}_0$ by reforming the above diffusion process as follows:
+
+\[
+q(\mathbf{x}_t \mid \mathbf{x}_0) = \mathcal{N}(\mathbf{x}_t; \sqrt{\bar{\alpha}_t}\mathbf{x}_0, (1 - \bar{\alpha}_t)\mathbf{I})
+\]
+
+where $\bar{\alpha}_t = \prod_{i=1}^t \alpha_i$ and $\alpha_t = 1 - \beta_t$. Following DDPM, a denoising function $\epsilon_\theta$ parameterized with $\theta$, commonly implemented with a neural network, is trained by minimizing the mean square error loss as follows:
+
+\[
+\mathbb{E}_{\mathbf{x}_0 \sim \mathcal{N}(0,1), \mathbf{x}_t, \epsilon_t}\left[ \left\| \epsilon_t - \epsilon_\theta(\mathbf{x}_t; t, c) \right\|_2^2 \right] 
+\]
+
+where $c$ is an optional condition and $\mathbf{x}_t$ is a perturbed version of real data $\mathbf{x}_0 \sim p_{\text{data}}$ by adding $t$-step noises. In this way, $\epsilon_\theta$ can be trained till converge by sampling $\mathbf{x}_0$ from real data distribution and a time step $t$, with an optional condition $c$.
+
+\subsubsection{Model Architecture}\label{model-architecture}
+
+The backbone model of DiffTraj is composed of  8 layers of transformer encoder with only self-attention, which FeedFoward network latent dimension is 1024, and multi-head attention number is 4.
+
+Considering the influence of body shape, we first take body pose and beta as inputs and use the smpl layer to obtain the 3D body joints position $J_{smpl} \in \R^{T \times 24 \times 3}$ under normalized orientation($O_{smpl}=0$). Then $J_{smpl}$ is mapped as a condition through an MLP to a latent dimension of 512 and added to the noise latent. During the training process, this condition did not use dropout, so it is a condition model and does not require classifir-free-guidance during inference.
+
+\subsubsection{Model Training}\label{model-training}
+
+We model this conditional probability task with diffusion model. Diffusion is modeled as a Markov noising process, ${\{x^{1:T}_n\}_{n=0}^N}$, where $x^{1:T}$ is drawn from the data distribution of $\Psi$, i.e.~$Cx^{1:T}_0=\Psi^{1:T}$.
+
+The forward diffusion process is \[
+q(x_{n}^{1:T}|x_{n-1}^{1:T}) = \mu(\sqrt{\alpha_n}x_{n-1}^{1:T}, (1-\alpha_n)I)
+\] where $x_{n}$ denote the full sequence at noising step $n$.
+
+We follow \href{https://github.com/GuyTevet/motion-diffusion-model}{MDM} to predict clean sequence $\hat{x_0}$, which is conditioned with $c=(\eta_t,\theta)$. And the diffusion model is trained with simple objective: \[
+L_{simple} = E_{x_0 \sim q(x_0|c),n \sim [1,N]} \big[\big\|x_0-\hat{x_0}\big\|^2_2\big]
+\] where $\hat{x_0} = G(x_n,n,c)$. Using just simple reconstruct loss without geometric losses can get sufficiently reasonable result. Once trained, $G$ can transform randomly sampled Gaussian noise sequences to generate high-quality samples through N denoising steps. Lastly, we train our DiffTraj on AMASS datasets. Sequence window size is 200 frames. The motion sequence is normalize before training. In training procedure, denoising step is 1000. In order to accelerate inferecen speed, we use DDIM sampling during inference, which can be completed in 100 steps sampling.
+
+\subsubsection{Inference: Progressive Fusion}\label{progressive-inference}
+
+Our model uses a fixed time window size during training, which poses a challenge when reasoning with input pose lengths that are not fixed. When applying diffusion models to generate or predict long sequences, there are several existing approaches: 1. autoregressive methods, but this requires adding past motion as a condition during retraining, which is not flexible; 2. During training, a fixed Windows size is used, but during inference: 2.1 Extrapolation using inpainting method. 2.2 Divide the long sequence noise into overlapping segments, and then perform weighted averaging on the overlapping areas during denoise. 2.3 We are using the final approach here \ref{alg:difftraj_progressive_predict}: due to the continuity of our trajectory representation, we first pad the input pose condition with a constant to a multiple of the Windows size with overlapping length, forward it in the same batch, and finally perform a linear weighted average of the overlapping areas, which makes the final trajectory we obtain a smooth transition.
+
+\begin{algorithm}\label{alg:difftraj_progressive_predict}
+\caption{Progressive trajectory fusion for long trajectory prediction.}
+\begin{algorithmic}[1]
+\REQUIRE $z_{i}^{j}$: The trajectory of $j$-th frame in $i$-th segment, $N$: the number of frames in a trajectory segment, $C$: the number of overlapped frames.
+\ENSURE $z$: A long sequence of trajectory of all frames.
+\FOR{$i = 1, 2, \ldots$} 
+    \STATE \COMMENT{Within each trajectory segment.}
+    \FOR{$j = 1$ to $N$}
+        \STATE \COMMENT{Start trajectory fusion for each frame.}
+        \IF{$j \leq N$ \textbf{and} $j \leq C$ \textbf{then}}
+            \STATE $\lambda_{fusion} \gets \frac{J}{(C + 1)}$ \COMMENT{Set a scale of trajectory fusion.}
+            \STATE $z_{i}^{j} \gets (1-\lambda_{fusion})z_{i-1}^{N-C+j} + \lambda_{fusion}z_{i}^{j}$ \COMMENT{Trajectory fusion with the previous segment.}
+        \ENDIF
+    \ENDFOR
+\ENDFOR
+\RETURN $z$ \COMMENT{Get final merged multi-segment trajectory.}
+\end{algorithmic}
+\end{algorithm}
+
+
+\subsection{Q4: Comparison to Physdiff and PULSE \&\& W3: Comparison with other baseline..}\label{q4-comparison-to-physdiff-and-pulse-w3-comparison-with-other-baseline..}
+
+A4: Although Physdiff also uses diffusion and physically based motion estimation techniques, it performs text2motion tasks that are completely different from our method, meanwhile, its code is not open-source.
+
+\href{https://github.com/ZhengyiLuo/PHC}{PHC} are physical-based motion tracking controller without RFC. And latest \href{https://github.com/ZhengyiLuo/PULSE}{PULSE} is the distill version of PHC. Both of them are no specific design for motion imiation task. In our testing, using PHC to track the estimated motion from the video was more difficult than tracking the motion in AMASS. The imitation performance of PHC would become very poor, ultimately leading to the collapse of the physical character and the failure of the imitation or suffer from significant tracking delay and cumulative error.
+
+In the imitation method we use, we first use data augmentation (changing the fps of training motion data) to make low-level policies more robust to fast-moving motions, while improving the success rate of imitation (success rate from 80\% to 81.8\%) and speeding up the fine-tuning process. At the same time, we also found that using our better trajectory prediction results can further improve the success rate of imitation. 
+
+% {[}TODO: add evidence: comparison of PHC and our motion imitation{]}
+
+\subsection{Q6: foot sliding metric compare to WHAM.}\label{q6-foot-sliding-metric-compare-to-wham.}
+
+A6: As mention in (L. 279-280), Although FS metric(4.3mm) of WHAM is slight better than ours(4.9mm), our method outperforms it in any other metric. This FS metric is equally good for both methods, and there is no noticeable difference in practical applications.
+
+\section{Response to Reviewer Qw3S}
+
+\subsection{W1\&W2.} We are working on doing these evaluation and ablation studies on motion data quality and scale, but we haven't finished them and we will provide them in a future version.
+
+\subsection{W3: Quantitative experiments on data quality.}
+
+\subsection{Q1\&Q2.} Sorry for the misleading writing, we will fix it in a future version.
+
+\section{Response to Reviewer 8yYT}
+
+\subsection{W: Novelty and the evaluation of dataset.}
+
+\subsection{Q: theoretical analysis of motion imitation.} 
+
+% TODO: add pretraining and finetune of motion imitation loss curve
+
+\include{figures/datasets_latent_comparison}
+\include{figures/data_process_pipeline}
+\include{figures/motion_imitation_qualitative_simple}
+\include{figures/imitation_compare_with_PHC}
+
+% TODO: add t-SNE or UMAP of Vposer/NeMF pose latent of LOCO dataset and 100STYLES
+
+% TODO: add more detailed statistics of video data pre-processing procedure
+
+\end{document}
+
+

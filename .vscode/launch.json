@@ -12,6 +12,17 @@
             // "python": "/cygdrive/c/Users/lithiumice/.platformio/penv/Scripts/python",
             // "python": "C:/Users/huali/miniconda3/envs/leetcode/python.exe",
             "console": "integratedTerminal"
+        },
+        {
+            "name": "Debug Bib Scrapper",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "scripts/scholar_scraper/main.py",
+            "justMyCode": false,
+            "console": "integratedTerminal",
+            "args": [
+                "scripts/scholar_scraper/conf/test_papers.txt", "debug_output/output.bib"
+            ]
         }
     ]
 }

@@ -1,0 +1,76 @@
+\documentclass[12pt, a4paper]{article}
+
+% 包含常用的包
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+
+% 设置页边距
+\usepackage[top=2.5cm, bottom=2.5cm, left=3cm, right=3cm]{geometry}
+
+% 文档信息
+\title{Your Paper Title}
+\author{Your Name}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+这里是摘要。简要描述你的论文内容。
+\end{abstract}
+
+\section{引言}
+这里是引言部分。介绍你的研究背景和目的。
+
+\section{方法}
+描述你使用的研究方法。
+
+\section{结果}
+展示你的研究结果。
+
+\subsection{数据分析}
+你可以在这里添加子节。
+
+\section{讨论}
+讨论你的研究结果的含义。
+
+\section{结论}
+总结你的研究发现。
+
+% 插入图片示例
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{example-image}
+    \caption{这是一个示例图片}
+    \label{fig:example}
+\end{figure}
+
+% 插入表格示例
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|c|c|c|}
+        \hline
+        列1 & 列2 & 列3 \\
+        \hline
+        A & B & C \\
+        D & E & F \\
+        \hline
+    \end{tabular}
+    \caption{这是一个示例表格}
+    \label{tab:example}
+\end{table}
+
+% 插入数学公式示例
+\begin{equation}
+    E = mc^2
+    \label{eq:einstein}
+\end{equation}
+
+\bibliographystyle{plain}
+\bibliography{references}  % 你的参考文献文件
+
+\end{document}

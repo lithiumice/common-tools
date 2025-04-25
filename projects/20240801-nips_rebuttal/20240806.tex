@@ -1,0 +1,162 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{rebuttal}
+\usepackage{graphicx}
+\usepackage{caption}
+
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{listings}
+% \usepackage[ruled,vlined]{algorithm2e}
+
+\newcommand{\COMMENT}[1]{{   // #1}}
+\title{Response to Reviewer}
+% \author{}
+
+\begin{document}
+
+\maketitle
+
+% R1: kh4z
+% R2: PXUu
+% R3: Qw3S
+% R4: 8yYT
+
+We express our gratitude to all the reviewers for their valuable and constructive feedback. We are glad at the reviewers’ recognition of our work's strengths: the motivation is clear(R-kh4z), video motion capture can scale up existing character animation, the proposed pose estimation and refinement system that combine diffusion-based trajectory predictor and a physics-based motion imitation technique shows good performance(R-kh4z, R-PXUu, R-Qw3S). A large synthetic plausible locomotion dataset, LOCO, could be useful to the community(R-PXUu, R-8yYT).
+In the accompanying file, we have included some new figures to enhance the details of our work.
+
+Common questions
+
+Q(R-kh4z, R-PXUu, R-Qw3S, R-8yYT): Limitation of our work.
+
+A: We will complete this section in future version from the following aspects: 1. no text labels have been added during the initial construction of the dataset. We leave it for future work. 2. The verification and filtering of large-scale datasets is a very complex and difficult task, and we believe that this is also an important factor that constrains the final effectiveness of our work.
+
+Individual questions
+
+R1:
+
+Q(R-kh4z): Dataset Curating Details.
+
+A: Thanks for pointing out that. We have drawn a pipeline for the entire process of data processing Fig.1. In future version, we will provide more detailed data processing records such as time consumption, inference speed, and statistics of the constructed dataset including gender, race, action style, even text label, etc. At the same time, we will add more cross experiments to the dataset to verify its effectiveness.
+
+Q(R-kh4z): More examples of LOCO dataset.
+
+A: We will add more example videos and figures in future version. To demostrate the diversity of our dataset, we project all poses of both datasets into VPoser’s latent space, run PCA and plot the first two principal components in Fig.2.
+
+Q(R-kh4z): The balance of the dataset.
+
+A: Thanks for your constructive question and advice, we will add more details and experiments about this. 
+
+Q(R-kh4z): The necessity of fine-tuning.
+
+A: The control signal in pretrain and finetune is different. The only control signal input during the pretrain process is the trajectory. But in the fine-tuning process, one hot embedding of style is added to achieve strong style control, so we can see obvious and diverse motion style.
+
+Q(R-kh4z): Licenses and permissions of online videos.
+
+A: Sorry for overlooking this part. The person in public videos we used span a wide range of different ethnicities, accents, professions and ages. The video data is covered under a Creative Commons Attribution 4.0 International license. The copyright of both the original videos remains with the original owners. Meanwhile, when using videos, we only extracted the motion of the people in the video without information such as clothes, faces, etc., which eliminates the invasion of privacy.We will double check to make sure there is no privacy and copyright issue in future version.
+
+Q(R-kh4z): imprecise writing
+
+A: Thanks for your advice, we will fix them in future version.
+
+Q(R-kh4z): Result of pretraining on LOCO.
+
+A: Pretrain model is not possible to directly evaluate metrics. Because: 1.Evaluator was trained on 100STYLES datasets. 2.Due to the unstructured nature of LOCO data, there is no style control signal in the pretrain stage as there is in the fine-tuning stage. But you can see qualitative results of on pretraining on LOCO dataset illustrated in supplementary video (at 1m26s).
+
+Q(R-kh4z): "WHAM overlooks the ambiguity of this task" Explanation.
+
+A: Thanks for pointing out the unclear expression in the article. We will fix it in future version. This sentence means: there exists ambiguity in human pose estimation in monocular images and videos, such as depth ambiguity, where there is a probability distribution. But WHAM uses a deterministic model for prediction, which may not be as effective as probabilistic modeling models.
+
+R2:
+
+
+Q(R-PXUu): the rationale of our video MoCap pipeline.
+
+A: The motivation of our video MoCap system is actually quite clear: in order to capture high-quality motion data from videos, we need to build a reasonable system: although WHAM is the SOTA of pose estimation, it estimates the trajectory of uneven ground, meanwhile its system uses deterministic models to model, ignoring the depth ambiguity problem in monocular videos. Therefore, we propose the camera aware DiffTraj to obtain a better global trajectory. In order to further obtain motion that conforms to physical laws, we use motion estimation technology for physical correction. At the same time, in practical applications, we found that this step complements the previous steps: predicting a more reasonable trajectory can better assist motion imitation, as illustrated in Fig.3 and Fig.4.
+
+Q(R-PXUu): Detail of motion imitation.
+
+A: Sorry for the simplified description of this part in paper, we will fix it in future version.
+
+Q(R-PXUu): Detail of DiffTraj.
+
+A: Sorry for the simplified description of this part in paper, we will fix it in future version.
+
+Q(R-PXUu): Comparison to Physdiff and PULSE.
+
+A: 
+
+1. Physdiff performs text2motion tasks that are completely different from our method. Although it also uses diffusion and physically based motion estimation techniques, and its code is not open-source.
+
+2. PULSE is the distill version of PHC, and he imitation performance of PHC is very poor. We provide performance comparison with PHC in Fig.4. We also show that replace WHAM with DiffTraj can significantly improve motion imitation performance, as illustrated in Fig.3.
+
+PHC are physical-based motion tracking controller without RFC. Both of them are no specific design for motion imitation task. In our testing, using PHC to track the estimated motion from the video was more difficult than tracking the motion in AMASS. The imitation performance of PHC would become very poor, ultimately leading to the collapse of the physical character and the failure of the imitation or suffer from significant tracking delay and cumulative error.
+
+In the imitation method we use, we first use data augmentation (changing the fps of training motion data) to make low-level policies more robust to fast-moving motions, while improving the success rate of imitation (success rate from 80\% to 81.8\%) and speeding up the fine-tuning process. At the same time, we also found that using our better trajectory prediction results can further improve the success rate of imitation. 
+
+Q: The diffusion objective.
+
+A: Sorry for the simplified description of this part in the paper, we will add it in future version. The diffusion objective is: $
+L_{simple} = E_{x_0 \sim q(x_0|c),n \sim [1,N]} \big[\big\|x_0-\hat{x_0}\big\|^2_2\big]$ where $\hat{x_0} = G(x_n,n,c)$. 
+
+
+Q: Robustness of our system.
+
+A: Our DiffTraj and motion imitation are quite robust in various situations. The flaw of the entire system lies in the front WHAM and DPVO parts: WHAM may predict inaccurate lower body in half-body situations (so we filtered out cases with more occlusion); DPVO may be less effective in crowded situations.
+
+Q(R-PXUu): foot sliding metric compare to WHAM.
+
+A: As mention in (L. 279-280), Although foot sliding(FS) metric(4.3mm) of WHAM is slight better than ours(4.9mm), our method outperforms it in any other metric. This FS metric is equally good for both, and there is no noticeable difference in practical applications.
+
+
+
+R3:
+
+Q(R-Qw3S): The performance gain from the proposed LOCO dataset.
+
+A: Thanks for your valuable and constructive feedback. We will provide more detailed discussions on the evaluation results, and do ablation studies on the data scale to further demonstrate the effectiveness of our dataset in final version.
+
+% We are working on doing these evaluation and ablation studies on motion data quality and scale, but we haven't finished them and we will provide them in a future version.
+
+
+Q(R-Qw3S): More different motion generation methods on the proposed LOCO dataset.
+
+A: Thanks for your valuable and constructive feedback. We will add them in future version.
+
+
+Q(R-Qw3S): Data quality examination
+
+A: Thanks for your valuable and constructive feedback. We will add more experiments you mentioned in the final version. We conducted quantitative experiments on our method in L272 and Table 2, demonstrating its superiority over baseline WHAM. Additionally, we further demonstrated the effectiveness of DiffTraj in motion imitation, as illustrated in Fig.3. 
+
+% We believe that there are several possible reasons why the improvement effect of the experiment may not be so significant: 1 The original 100STYLES dataset has reached a saturation level, with sufficient data volume for each style of motion, so there is not much room for improvement. 2: Filtering of collected data: For such a large amount of pseudo-labeled datasets, it is not practical to manually check them one by one. We mainly rely on setting filtering conditions to filter automatically, and we have not done many filtering conditions yet. This may be one reason why the improvement in effectiveness is not significant
+
+
+Q(R-Qw3S): "Baseline" in Tab.3.
+
+A: Sorry for the misleading writing, we will fix it in a future version. "Baseline" in Table 3 means: Directly train on 100STYLES.
+
+
+Q(R-Qw3S): Typos in the paper.
+
+A: Thanks for pointing out. We will fix them in the final version.
+
+
+
+R4:
+
+% Q(R-8yYT): Novelty.
+% A: 
+
+Q(R-8yYT): The evaluation of the dataset.
+
+A: Sorry that we didn't have time to conduct more experiments. Due to the lack of text in our dataset, we are unable to perform text to motion generation tasks like MDM. We will add more experiments on trajectory control action generation methods in the future, such as
+Local Motion Phases.
+
+Q(R-8yYT): Theoretical analysis of motion imitation.
+
+A: Sorry for the simplified description of this part in paper, we will fix it in the future version. We supplemented the details about motion estimation in Fig. 3 and Fig.4 to demonstrate our contribution.
+
+
+\end{document}
+

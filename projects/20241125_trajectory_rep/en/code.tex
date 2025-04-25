@@ -1,0 +1,130 @@
+
+
+
+\section*{Trajectory Coordinate Transformations}
+
+\subsection*{Global to Local Heading Transformation}
+Given a trajectory in global coordinates with translation $\mathbf{T} = [\mathbf{xy}, z]$ and orientation quaternions $\mathbf{q}$, the transformation to local heading coordinates is defined as:
+
+\begin{align}
+    \mathbf{q}' &= \mathbf{q} \otimes \mathbf{q}_{\text{base}}^* \\
+    \theta &= \text{getHeading}(\mathbf{q}') \\
+    \mathbf{q}_h &= \text{getHeadingQuaternion}(\mathbf{q}') \\
+    \mathbf{q}_l &= \text{deheadingQuaternion}(\mathbf{q}', \mathbf{q}_h) \\
+    \mathbf{R}_l &= \text{quaternionToRot6D}(\mathbf{q}_l) \\
+    \Delta\mathbf{xy} &= \mathbf{xy}_{t+1} - \mathbf{xy}_t \\
+    \Delta\theta &= \theta_{t+1} - \theta_t \\
+    \Delta\mathbf{xy}_{\text{local}} &= \text{rot2D}(\Delta\mathbf{xy}, -\theta_t) \\
+    \mathbf{v}_{\theta} &= [\cos(\Delta\theta), \sin(\Delta\theta)]
+\end{align}
+
+The local trajectory representation is then:
+\begin{equation}
+    \mathbf{\Psi} = [\Delta\mathbf{xy}_{\text{local}}, z, \mathbf{R}_l, \mathbf{v}_{\theta}]
+\end{equation}
+
+\subsection*{Local to Global Heading Transformation}
+Given a local trajectory $\mathbf{\Psi} = [\Delta\mathbf{xy}_{\text{local}}, z, \mathbf{R}_l, \mathbf{v}_{\theta}]$, the transformation back to global coordinates is:
+
+\begin{align}
+    \theta &= \text{vectorToHeading}(\mathbf{v}_{\theta}) \\
+    \theta_{\text{global}} &= \sum_{t=0}^T \theta_t \\
+    \mathbf{q}_h &= \text{headingToQuaternion}(\theta_{\text{global}}) \\
+    \Delta\mathbf{xy}_{\text{global}} &= \text{rot2D}(\Delta\mathbf{xy}_{\text{local}}, \theta_{\text{global}}) \\
+    \mathbf{xy} &= \sum_{t=0}^T \Delta\mathbf{xy}_{\text{global},t} \\
+    \mathbf{q}_l &= \text{rot6DToQuaternion}(\mathbf{R}_l) \\
+    \mathbf{q} &= \mathbf{q}_h \otimes \mathbf{q}_l \otimes \mathbf{q}_{\text{base}}
+\end{align}
+
+The global trajectory is then:
+\begin{equation}
+    \mathbf{T} = [\mathbf{xy}, z], \quad \mathbf{Q} = \mathbf{q}
+\end{equation}
+
+where:
+\begin{itemize}
+    \item $\otimes$ denotes quaternion multiplication
+    \item $\mathbf{q}^*$ denotes quaternion conjugate
+    \item $\text{rot2D}(\mathbf{v}, \theta)$ rotates 2D vector $\mathbf{v}$ by angle $\theta$
+    \item $\Delta$ denotes difference between consecutive frames
+    \item Subscript $t$ denotes time step
+\end{itemize}
+
+
+\section*{Heading Transformation Functions}
+
+\subsection*{Heading Angle Extraction}
+Given a quaternion $\mathbf{q} = [q_x, q_y, q_z, q_w]$, the heading angle $\theta$ is extracted as:
+\begin{equation}
+    \theta = 2 \cdot \text{atan2}(q_w, q_x + \epsilon)
+\end{equation}
+where $\epsilon$ is a small constant (typically $10^{-6}$) to avoid numerical instability.
+
+\subsection*{Heading Quaternion Extraction}
+The heading quaternion $\mathbf{q}_h$ is obtained by zeroing the $y$ and $z$ components of the original quaternion:
+\begin{align}
+    \mathbf{q}_h &= \text{normalize}([q_x, 0, 0, q_w]) \\
+    \text{normalize}(\mathbf{q}) &= \frac{\mathbf{q}}{\|\mathbf{q}\|}
+\end{align}
+
+\subsection*{Deheading Operation}
+The deheading operation removes the heading component from a quaternion:
+\begin{equation}
+    \mathbf{q}_{\text{deheaded}} = \mathbf{q}_h^* \otimes \mathbf{q}
+\end{equation}
+where $\mathbf{q}_h^*$ is the conjugate of the heading quaternion.
+
+\subsection*{Heading Vector Conversions}
+Converting between heading angle and 2D vector representation:
+
+\subsubsection*{Angle to Vector}
+For heading angle $\theta$:
+\begin{equation}
+    \mathbf{v}_\theta = \begin{bmatrix}
+        \cos(\theta) \\
+        \sin(\theta)
+    \end{bmatrix}
+\end{equation}
+
+\subsubsection*{Vector to Angle}
+For heading vector $\mathbf{v}_\theta = [v_x, v_y]$:
+\begin{equation}
+    \theta = \text{atan2}(v_y, v_x)
+\end{equation}
+
+\subsection*{Heading Angle to Quaternion}
+Converting heading angle to quaternion representation:
+\begin{align}
+    \mathbf{a} &= [0, 0, \theta] \quad \text{(angle-axis representation)} \\
+    \mathbf{q}_h &= \text{angleAxisToQuaternion}(\mathbf{a})
+\end{align}
+
+where the angle-axis to quaternion conversion is defined as:
+\begin{align}
+    \theta &= \|\mathbf{a}\|_2 \\
+    \mathbf{v} &= \frac{\mathbf{a}}{\theta} \\
+    \mathbf{q}_h &= \begin{bmatrix}
+        \mathbf{v}\sin(\theta/2) \\
+        \cos(\theta/2)
+    \end{bmatrix}
+\end{align}
+
+\subsection*{Properties and Notes}
+\begin{itemize}
+    \item All quaternions are assumed to be unit quaternions (normalized)
+    \item The heading angle represents rotation around the vertical axis (z-axis)
+    \item The heading vector is a 2D unit vector in the horizontal plane
+    \item The safe arctangent ($\text{atan2}$) implementation includes numerical stability handling
+\end{itemize}
+
+\subsection*{Key Mathematical Operations}
+Quaternion operations used in the transformations:
+\begin{align}
+    \mathbf{q}_1 \otimes \mathbf{q}_2 &= \begin{bmatrix}
+        q_{1w}q_{2x} + q_{1x}q_{2w} + q_{1y}q_{2z} - q_{1z}q_{2y} \\
+        q_{1w}q_{2y} - q_{1x}q_{2z} + q_{1y}q_{2w} + q_{1z}q_{2x} \\
+        q_{1w}q_{2z} + q_{1x}q_{2y} - q_{1y}q_{2x} + q_{1z}q_{2w} \\
+        q_{1w}q_{2w} - q_{1x}q_{2x} - q_{1y}q_{2y} - q_{1z}q_{2z}
+    \end{bmatrix} \\
+    \mathbf{q}^* &= [-q_x, -q_y, -q_z, q_w]
+\end{align}

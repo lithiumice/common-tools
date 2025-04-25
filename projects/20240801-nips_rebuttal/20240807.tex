@@ -1,0 +1,286 @@
+
+We thank all the reviewers for their valuable and constructive feedback. We are glad at the reviewers’ recognition of our work's strengths: the motivation is clear (R-kh4z), the proposed system that combines diffusion-based trajectory predictor and a physics-based motion imitation technique shows good performance (R-kh4z, R-PXUu, R-Qw3S). A large synthetic plausible locomotion dataset, LOCO, could be useful to the community (R-PXUu, R-8yYT).
+In the accompanying file, we have included some new figures to enhance the details of our work.
+
+Common Questions:
+
+**Q(R-kh4z, R-PXUu, R-Qw3S, R-8yYT): Limitation of our work.**
+
+A: We will complete this section in the final version from the following aspects: 
+1. Multimodal Dataset Enhancement: The initial construction of our dataset did not include text labels or other modalities beyond motion data. Incorporating additional modalities, such as textual descriptions or semantic annotations, could significantly enrich the dataset's potential for downstream tasks. This multimodal approach would expand the applicability of our dataset to a wider range of research scenarios and practical applications in the field of locomotion analysis and generation. 
+2. Dataset Verification and Refinement: Given the large-scale nature of our dataset, there is a need for further verification and filtering processes. This step is crucial to ensure the highest quality and reliability of the data, which in turn affects the performance and generalizability of models trained on this dataset.
+
+Individual Questions:
+
+# R1:
+
+
+
+We sincerely appreciate your recognition of our work's strengths and insightful suggestions. Here we respond to each of your comments in detail below.
+
+
+**Q(R-kh4z): Dataset Curation and Preparation Details.**
+
+A: We appreciate your feedback regarding the dataset details. We have drawn a pipeline for the entire process of data processing **Fig.1 of our Rebuttal PDF file**. In the final version, we will provide more detailed statistics of the dataset curated using the proposed pipeline such as time consumption, inference speed, and various properties of the constructed dataset including gender, race, action style, and text label using visual LLM. At the same time, we will add more cross-experiments to the dataset to verify its effectiveness.
+
+
+
+**Q(R-kh4z): More Videos \& Example Data.**
+
+A: We acknowledge the need for more examples. We will add more example videos and figures in final version. We have included additional example figures in the attached PDF to better showcase the quality and diversity of the dataset. In **Fig.2 of our Rebuttal PDF file**, to demonstrate the diversity of our dataset, we project all poses of both datasets into VPoser’s latent space, run PCA and plot the first two principal components. We also present more qualitative visualization in **Fig.5 of our Rebuttal PDF file**.
+
+**Q(R-kh4z): Dataset Balance Discussion.**
+
+A: Thanks for your constructive question and advice. The dataset's balance is crucial for its effectiveness. We included a wide range of motions, environments, and subjects to create a balanced dataset. We will add more details and experiments about the impact of dataset scale on performance. 
+
+**Q(R-kh4z): Motion Generation Diversity and Fine-Tuning.**
+
+A: Thank you for your inquiry regarding motion generation diversity and the fine-tuning process. We appreciate the opportunity to clarify these important aspects of our work.
+1. While the LOCO dataset is diverse, the initial model training aimed to establish a robust baseline. Fine-tuning was performed to adapt the model to specific motion nuances and enhance diversity further. 
+2. The control signal in pretrain and finetune is different. The only control signal input during the pretrain process is the trajectory. But in the fine-tuning process, one hot embedding of style is added to achieve strong style control and see diverse motion style.
+
+**Q(R-kh4z): Licenses and Permissions of Online Videos.**
+
+A: We appreciate your concern regarding the licenses and permissions of the online videos used in our research. We take these matters seriously and will address them comprehensively in the final version of our paper. Here's a concise overview of our approach:
+
+1. Licensing: The videos are covered under a Creative Commons Attribution 4.0 International license. Original copyright remains with the video owners.
+2. Data Privacy: Our pipeline extracts only motion data, excluding other visual information, to protect individual privacy.
+3. Ethical Considerations: We will conduct a thorough review to ensure there are no privacy or copyright issues before publishing the dataset.
+
+We appreciate your attention to this important aspect of our research. Rest assured, we will handle all legal and ethical considerations with the utmost care and transparency in our final publication.
+
+
+
+**Q(R-kh4z): Language and Terminology.**
+
+A: We have revised the language to be more precise and professional, avoiding jargon and imprecise phrases. We will fix them in the final version.
+
+**Q(R-kh4z): For motion generation in Table 3, Result of Pretraining on LOCO Dataset.**
+
+A: We appreciate your inquiry regarding the motion generation results presented in Table 3, specifically concerning the pretraining on the LOCO dataset. We present the result as follows:
+
+| Method | FID | Diversity |
+| --- | --- | --- |
+| Ground Truth | 0.00 | 7.7546 |
+| (baseline) Directly train on 100STYLES | 0.39 | 7.7041 |
+| **Pretrain on Fitting Data** | 0.79 | 7.7971 |
+| Pretrain on Fitting Data + Finetune on 100STYLES | 0.34 | 7.7182 |
+
+It is important to note that the evaluator was trained specifically on the 100STYLES dataset. Consequently, the evaluation metric for the pretrained model should be interpreted cautiously, as it serves primarily as a reference point. This is due to the absence of a style control signal during the pretraining phase. For the evaluation of this pretrained model, we utilized the "neutral" style label from the 100STYLES dataset to maintain consistency.
+
+
+
+**Q(R-kh4z): Clarification on WHAM Ambiguity.**
+
+A: We sincerely appreciate your attention to detail and for bringing this unclear expression to our notice. We will address this issue in the final version to ensure better comprehension. To clarify:
+- The sentence in question aims to highlight the inherent ambiguity in human pose estimation from monocular images and videos, particularly depth ambiguity. This ambiguity naturally leads to a probability distribution of possible poses rather than a single, definitive solution.
+- However, WHAM employs a deterministic prediction model, which outputs a single estimate. This approach, while computationally efficient, may not fully capture the range of possible poses inherent in ambiguous scenarios. In contrast, probabilistic models have the potential to represent this uncertainty more effectively by generating a distribution of plausible poses.
+
+We acknowledge that this limitation of WHAM's deterministic approach could potentially impact its effectiveness in scenarios where pose ambiguity is significant. In the revised version, we will elaborate on this point to provide a more nuanced discussion of the trade-offs between deterministic and probabilistic approaches.
+
+
+
+
+# R2:
+
+
+We sincerely appreciate your recognition of our work's strengths and insightful suggestions. Here we respond to each of your comments in detail below.
+
+
+**Q(R-PXUu): Key Contribution and Methodology Details.**
+
+A: Thank you for your feedback. We understand the need to clarify our methodological choices and contributions. Here's a concise response addressing your points:
+1. While our methodology builds on prior work, our primary contribution lies in the integration and adaptation of these methods to create the LOCO dataset. This is particularly significant given the scarcity of locomotion datasets in this domain. 
+2. Additionally, we introduce a novel pretrain and finetuning framework specifically designed for controlling locomotion. 
+3. At the same time, in practical applications, we found that this step complements the previous steps: predicting a more reasonable trajectory can better assist motion imitation, as illustrated in **Fig.3 and Fig.4 of our Rebuttal PDF file**.
+
+
+
+
+**Q(R-PXUu): Physics-Based Motion Imitation Post-Processing.**
+
+A: Here we give a brief descriptions of the physics-based motion imitation post-processing. More detailed about this will be included in the final version. The aproach of our motion imitation is similar to SimPoE [1], tennis2player [2], EmbodiedPose [3]. The task of controlling the character agent in a physically simulated environment to mimic reference motions can be formulated as a Markov decision process (MDP), defined by a tuple $M=(S,A,\tau,r,\gamma)$ of states, actions, transition dynamics, a reward function, and a discount factor. We first initialize the state of the simulated character $s_0$ to be the same initial state of the reference motion. Starting from $s_0$, the agent iteratively samples actions $a_t \in A$ according to a policy $\pi(a_t | s_t)$ at each state $s_t \in S$. The environment then transitions to the next state $s_{t+1}$ according to the transition dynamics $T(s_{t+1} | s_t, a_t)$, and then outputs a scalar reward $r_t$ for that transition. The reward is computed based on how well the simulated motion aligns with the reference motion. The goal of this learning process is to learn an optimal policy $\pi*$ that maximizes the expected return $J(\pi) = E_\pi[\sum_t(\gamma^tr_t)]$. 
+
+[1] Yuan, Y., Wei, S. E., Simon, T., Kitani, K., & Saragih, J. (2021). Simpoe: Simulated character control for 3d human pose estimation. In Proceedings of the IEEE/CVF conference on computer vision and pattern recognition (pp. 7159-7169).
+
+[2] Zhang, H., Yuan, Y., Makoviychuk, V., Guo, Y., Fidler, S., Peng, X. B., & Fatahalian, K. (2023). Learning Physically Simulated Tennis Skills from Broadcast Videos. ACM Transactions on Graphics (TOG), 42(4), 1-14.
+
+[3] Luo, Z., Iwase, S., Yuan, Y., & Kitani, K. (2022). Embodied scene-aware human pose estimation. Advances in Neural Information Processing Systems, 35, 6815-6828.
+
+
+
+
+
+
+
+**Q(R-PXUu): DiffTraj Details and The Diffusion Objective.**
+
+A: We appreciate your request for more detailed information on the DiffTraj model. We acknowledge that our initial description was not as comprehensive as it should have been, and we are committed to addressing this in the final version of our manuscript. In the revised version, we will provide an exhaustive description of the DiffTraj model, which will include: 1. Detailed Model Architecture 2. Progressive Trajectory Fusion for Long Time Prediction. 3. Diffusion Objective. 4. Ablation Studies of Hyper-parameters.
+
+
+
+**Q(R-PXUu): Comparison with Other Methods.**
+
+We appreciate your inquiry regarding comparisons with other methods, particularly PhysDiff and PULSE/PHC. We would like to provide further clarification on our stance:
+
+1. PhysDiff [1]: 
+While PhysDiff does employ diffusion and physically-based motion imitation techniques, its primary focus on text-to-motion tasks differs substantially from our method's objectives. Furthermore, the lack of open-source code for PhysDiff presents challenges in conducting a direct, fair comparison. These factors make a meaningful comparison difficult to achieve within the scope of our current study.
+2. PULSE [2] and PHC [3]: 
+We acknowledge the relationship between PULSE and PHC, with PULSE being a distilled version of PHC. Our decision to compare with PHC was based on its foundational nature and the availability of performance data. As demonstrated in **Fig.4**, PHC's imitation performance is notably inferior to our method.
+To further illustrate the effectiveness of our approach, we have conducted additional experiments replacing WHAM with DiffTraj. The results, presented in **Fig.3** of our Rebuttal PDF, clearly demonstrate a significant improvement in motion imitation performance when using DiffTraj.
+It's crucial to note that both PULSE and PHC are physical-based motion tracking controllers without Residual Force Control (RFC). Our extensive testing revealed severe limitations when using PHC to track estimated motion from video, particularly in comparison to tracking motion from the AMASS dataset. These limitations manifested as:
+    a) Frequent collapses of the physical character
+    b) Complete failure of imitation in many cases
+    c) Significant tracking delays
+    d) Accumulation of errors over time
+These issues are visually represented in **Fig.4** of our Rebuttal PDF, which clearly illustrates the shortcomings of PHC in our specific use case.
+
+We believe these additional details and comparisons substantiate the novelty and effectiveness of our approach. In the final version of our manuscript, we will ensure to incorporate these insights, providing a more comprehensive context for our method's performance relative to existing approaches.
+
+
+
+[1] Yuan, Y., Song, J., Iqbal, U., Vahdat, A., & Kautz, J. (2023). Physdiff: Physics-guided human motion diffusion model. In Proceedings of the IEEE/CVF international conference on computer vision (pp. 16010-16021).
+
+[2] Luo, Z., Cao, J., Merel, J., Winkler, A., Huang, J., Kitani, K. M., & Xu, W. Universal Humanoid Motion Representations for Physics-Based Control. In The Twelfth International Conference on Learning Representations.
+
+[3] Luo, Z., Cao, J., Kitani, K., & Xu, W. (2023). Perpetual humanoid control for real-time simulated avatars. In Proceedings of the IEEE/CVF International Conference on Computer Vision (pp. 10895-10904).
+
+
+
+
+
+
+
+
+**Q(R-PXUu): Model Robustness.**
+
+A: Our DiffTraj and motion imitation are quite robust in various situations. The flaw of the entire system lies in the front WHAM and DPVO parts: WHAM may predict inaccurate lower body in half-body situations (so we filtered out cases with occlusion); DPVO may be less accurate in crowded situations.
+
+**Q(R-PXUu): Foot Sliding Metric.**
+
+A: As mention in (L. 279-280), Although foot sliding(FS) metric(4.3mm) of WHAM is slight better than ours(4.9mm), our method outperforms it in all the other metrics. This FS metric is equally good for both, and there is no noticeable difference in practical applications.
+
+
+
+
+
+
+
+# R3:
+
+We express our gratitude for your recognition of our work. We try to address several of the questions you have raised.
+
+**Q(R-Qw3S): Performance Gain and Ablation Studies.**
+
+A: Thanks for your valuable and constructive feedback. We will add more detailed discussions on evaluation results and conduct ablation studies on data scale and motion patterns, to further demonstrate the effectiveness of our dataset in the final version.
+
+
+**Q(R-Qw3S): Universality of Performance Improvement.**
+
+A: Thanks for your valuable and constructive feedback. In response to your concerns, we would like to elaborate on our plans for the final version:
+
+1. Trajectory Control Motion Generation:
+We recognize the need for more comprehensive comparisons with existing methods. In the final version, we will include additional experiments focusing on trajectory control motion generation, comparing our approach with:
+    - Codebook Matching [1]
+    - DeepPhase [2]
+    - Local Motion Phase (LMP) [3]
+    - MoGlow [4]
+These comparisons will help contextualize our method's performance within the current landscape of motion generation techniques.
+
+2. Dataset Versatility:
+While our dataset lacks text annotations, precluding direct text-to-motion generation tasks like MDM, we believe it has significant potential for various motion-related applications. To demonstrate this versatility, we plan to:
+a) Gesture Generation:
+We will pre-train our model on our dataset and fine-tune it for audio-to-gesture tasks. We'll utilize frameworks like ZeroEGGs [5] and its associated small-scale dataset for this evaluation.
+
+
+
+[1] Starke, S., Starke, P., He, N., Komura, T., & Ye, Y. (2024). Categorical Codebook Matching for Embodied Character Controllers. ACM Transactions on Graphics (TOG), 43(4), 1-14.
+
+[2] Starke, S., Mason, I., & Komura, T. (2022). Deepphase: Periodic autoencoders for learning motion phase manifolds. ACM Transactions on Graphics (TOG), 41(4), 1-13.
+
+[3] Starke, S., Zhao, Y., Komura, T., & Zaman, K. (2020). Local motion phases for learning multi-contact character movements. ACM Transactions on Graphics (TOG), 39(4), 54-1.
+
+[4] Henter, G. E., Alexanderson, S., & Beskow, J. (2020). Moglow: Probabilistic and controllable motion synthesis using normalising flows. ACM Transactions on Graphics (TOG), 39(6), 1-14.
+
+[5] Ghorbani, S., Ferstl, Y., Holden, D., Troje, N. F., & Carbonneau, M. A. (2023, February). ZeroEGGS: Zero‐shot Example‐based Gesture Generation from Speech. In Computer Graphics Forum (Vol. 42, No. 1, pp. 206-216).
+
+
+
+
+
+
+**Q(R-Qw3S): Data Quality Examination and Quantitative Experiments**
+
+A: We greatly appreciate your valuable and constructive feedback regarding data quality examination and quantitative experiments. We acknowledge the importance of robust evaluation and are committed to enhancing our manuscript accordingly.
+1. Existing Quantitative Experiments:
+We would like to draw your attention to the quantitative experiments already present in our manuscript: Line 272 and Table 2 provide comparative results demonstrating our method's superiority over the baseline WHAM.
+2. Additional Experiments: **Fig.3 of our Rebuttal PDF file** illustrates the effectiveness of DiffTraj in motion imitation tasks.
+3. Data Quality Assessment:
+We recognize the need for more comprehensive data quality assessment and will include the following in the final version. 
+a) We will conduct and report a thorough analysis of our dataset's quality, including metrics on pose diversity, motion complexity, and potential biases.
+b) A comparison of our dataset characteristics with existing benchmarks will be provided to contextualize its contribution.
+
+**Q(R-Qw3S): Baseline Method in Table 3.**
+
+A: We will fix it in the final version. ``Baseline" in Table 3 means: Directly train on 100STYLES.
+
+
+**Q(R-Qw3S): Typos and Formatting.**
+
+A: Thanks for pointing out. We will fix them in the final version.
+
+
+
+# R4:
+
+
+We express our gratitude for your recognition of our work. We try to address several of the questions you have raised.
+
+
+
+**Q(R-8yYT): Technical Novelty and Dataset Evaluation.**
+
+A: We appreciate your insightful query regarding the technical novelty of our work and the evaluation of our dataset. We acknowledge the importance of demonstrating our method's uniqueness and the dataset's versatility. In response to your concerns, we would like to elaborate on our plans for the final version:
+
+1. Trajectory Control Motion Generation:
+We recognize the need for more comprehensive comparisons with existing methods. In the final version, we will include additional experiments focusing on trajectory control motion generation, comparing our approach with:
+    - Codebook Matching [1]
+    - DeepPhase [2]
+    - Local Motion Phase (LMP) [3]
+    - MoGlow [4]
+These comparisons will help contextualize our method's performance within the current landscape of motion generation techniques.
+
+2. Dataset Versatility:
+While our dataset lacks text annotations, precluding direct text-to-motion generation tasks like MDM, we believe it has significant potential for various motion-related applications. To demonstrate this versatility, we plan to:
+a) Gesture Generation:
+We will pre-train our model on our dataset and fine-tune it for audio-to-gesture tasks. We'll utilize frameworks like ZeroEGGs [5] and its associated small-scale dataset for this evaluation.
+
+
+
+[1] Starke, S., Starke, P., He, N., Komura, T., & Ye, Y. (2024). Categorical Codebook Matching for Embodied Character Controllers. ACM Transactions on Graphics (TOG), 43(4), 1-14.
+
+[2] Starke, S., Mason, I., & Komura, T. (2022). Deepphase: Periodic autoencoders for learning motion phase manifolds. ACM Transactions on Graphics (TOG), 41(4), 1-13.
+
+[3] Starke, S., Zhao, Y., Komura, T., & Zaman, K. (2020). Local motion phases for learning multi-contact character movements. ACM Transactions on Graphics (TOG), 39(4), 54-1.
+
+[4] Henter, G. E., Alexanderson, S., & Beskow, J. (2020). Moglow: Probabilistic and controllable motion synthesis using normalising flows. ACM Transactions on Graphics (TOG), 39(6), 1-14.
+
+[5] Ghorbani, S., Ferstl, Y., Holden, D., Troje, N. F., & Carbonneau, M. A. (2023, February). ZeroEGGS: Zero‐shot Example‐based Gesture Generation from Speech. In Computer Graphics Forum (Vol. 42, No. 1, pp. 206-216).
+
+
+
+
+
+
+**Q(R-8yYT): Theoretical analysis of motion imitation.**
+
+A: We appreciate your inquiry regarding the theoretical analysis of motion imitation in our work. We acknowledge that this aspect requires further elaboration, and we are committed to enhancing this section in the final version of our manuscript. To address your concerns, we plan to expand our analysis as follows:
+1. Data Augmentation Technique:
+- We will provide a more detailed explanation of our data augmentation method, specifically: The process of altering the fps of training motion data, this improves robustness to fast-moving motions. 
+- We will provide a comprehensive analysis of the improvement in imitation success rate (increase from 80% to 81.8% in our experiments). The mechanism by which this augmentation accelerates the fine-tuning process.
+2. DiffTraj Contribution:
+We will offer a more in-depth analysis of how DiffTraj enhances motion imitation:
+- Quantitative analysis of the improvement in imitation steps reward attributable to DiffTraj. 
+- Better trajectory prediction leads to improved imitation and reduce more than 90% fine-tuning consumption time, as illustated in **Fig.3 of our rebuttal PDF file**.
+
+<!-- A: We will improve this part in the final version. We supplemented the details about motion imitation in Fig. 3 and Fig.4 to demonstrate our contribution. In our imitation method, we first use data augmentation (changing the fps of training motion data) to make low-level policies more robust to fast-moving motions, while improving the success rate of imitation (success rate from 80\% to 81.8\%) and speeding up the fine-tuning process. At the same time, we also found that using our better trajectory prediction results from DiffTraj can further improve the success rate of imitation, as illustrated in Fig.3.  -->

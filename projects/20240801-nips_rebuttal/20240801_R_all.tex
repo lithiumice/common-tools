@@ -1,0 +1,27 @@
+\renewcommand{\paragraph}[1]{\medskip\noindent\textbf{#1}}
+\newcommand{\Rone}{\textcolor{ForestGreen}{\textbf{R1}}}
+\newcommand{\Rtwo}{\textcolor{Cyan}{\textbf{R2}}}
+\newcommand{\Rthree}{\textcolor{YellowOrange}{\textbf{R3}}}
+\newcommand{\Rfour}{\textcolor{Blue}{\textbf{R4}}}
+
+\newcommand{\RoneH}{\textcolor{ForestGreen}{\textbf{kh4z}}}
+\newcommand{\RtwoH}{\textcolor{Cyan}{\textbf{PXUu}}}
+\newcommand{\RthreeH}{\textcolor{YellowOrange}{\textbf{Qw3S}}}
+\newcommand{\RfourH}{\textcolor{Blue}{\textbf{8yYT}}}
+
+\newcommand{\RoneC}[1]{{\color{ForestGreen}#1}}
+\newcommand{\RtwoC}[1]{{\color{Cyan}#1}}
+\newcommand{\RthreeC}[1]{{\color{YellowOrange}#1}}
+\newcommand{\RfourC}[1]{{\color{Blue}#1}}
+
+
+\noindent To all: We thank the reviewers \Rone~(\RoneH), \Rtwo~(\RtwoH), \Rthree~(\RthreeH) and \Rfour~(\RfourH) for their constructive feedback. The reviewer find that the motivation is clear[\Rone], video motion capture can scale up existing character animation, the proposed pose estimation and refinement system that combine diffusion-based trajectory predictor and a physics-based motion imitation technique shows good performance[\Rone]. And a large synthetic plausible locomotion dataset, LOCO, could be useful to the community[\Rtwo].
+
+
+\noindent \RoneC{Response to R1}: Q1: result of pretraining on LOCO. A1: qualitative results of on pretraining on LOCO dataset is illustrated in supplementary video in 1:26. Q2: " WHAM overlooks the ambiguity of this task" meaning. A2: There exists ambiguity in human pose estimation in monocular images and videos, such as depth ambiguity, where there is a probability distribution. But WHAM uses a deterministic model for prediction, which may not be as effective as probabilistic modeling models.
+
+
+\noindent \RoneC{Response to R2}: Q1: ... A1: ... Q2: detail of motion imitation. A2: ... Q3: detail of DiffTraj. A3: ... Q4: Comparison to Physdiff and PULSE. A4: Physdiff is aim at text-to-motion task, meanwhile, its code is not open-source. PULSE and PHC are physical-based motion controller without RFC. PULSE did not obtain the reference motion step from the video, it was only the motion in the imitate AMASS dataset. In our testing, using PHC to track the estimated motion from the video was more difficult than tracking the motion in AMASS. The tracking effect of PHC method would become very poor, ultimately leading to the collapse of the physical character and the failure of the imitation. In the imitation method we use, we first use data augmentation (changing the fps of training motion data) to make low-level policies more robust to fast-moving motions, while improving the success rate of estimation(for motion of xx seconds, consumption time decrease from xxs to xxs) and speeding up the fine-tuning process. At the same time, we also found that using our better trajectory prediction results can further improve the success rate of imitation(success rate from xx\% to xx\%). Q6: foot sliding metric compare to WHAM. A6: As mention in (L. 279-280), Although FS metric(4.3mm) of WHAM is slight better than ours(4.9mm), our method outperforms it in any other metric. This FS metric is equally good for both methods, and there is no noticeable difference in practical applications
+
+
+\noindent \RoneC{Response to R3}: Q1: Meaning of baseline in Tab 3. A1: Sorry that the text in the table here was not expressed clearly. The baseline here refers to "training directly on the 100STYLE dataset", which is compared with the third line "pretraining on the LOCO dataset and then fine-tuning on the 100STYLES dataset". Q2: Tyros. A2: Thanks for pointing out, we will fix them.

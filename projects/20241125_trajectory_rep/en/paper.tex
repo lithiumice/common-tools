@@ -1,0 +1,33 @@
+
+
+\section*{Heading Coordinate and Egocentric Trajectory Representation}
+
+The heading vector of a person points towards where the person is facing and is parallel to the ground. We obtain the heading vector by aligning the $z$-axis of the person's root coordinate with the world $z$-axis and use the resulting $y$-axis of the aligned root coordinate as the heading vector. This way of obtaining the heading is more stable than using the yaw of the Euler angle representation, which suffers from singularities and can be quite unstable. The heading coordinate is defined by first placing the world coordinate at the root position of the person and then rotating the world coordinate around the $z$-axis (vertical) to align the $y$-axis with the heading vector. By definition, representing and predicting human trajectories in the heading coordinate allows the predicted trajectory to be invariant of the person's absolute $xy$ translation and heading. In the egocentric trajectory representation $\psi_t = (\delta x_t, \delta y_t, z_t, \delta\phi_t, \eta_t)$, we use absolute height $z_t$ since the height of a person relative to the ground does not vary a lot and is highly correlated with the body motion of the person. For the local rotation $\eta_t$, we adopt the 6D rotation representation [125] to avoid discontinuity.
+
+After we obtain occlusion-free body motion $\Theta^i$ for each person using the motion infiller, a key problem still remains: the estimated trajectory $(\vec{T}^i, \vec{R}^i)$ of the person is still occluded and not in a consistent global coordinate system. To tackle this problem, we propose to learn a global trajectory predictor $\mathcal{T}$ that generates a person's occlusion-free global trajectory $(\vec{T}^i, \vec{R}^i)$ from the local body motion $\Theta^i$.
+
+Given a general occlusion-free body motion $\Theta = (\theta_1,\ldots,\theta_m)$ as input, the trajectory predictor $\mathcal{T}$ outputs its corresponding global trajectory $(T, R)$ including the root translations $T = (\tau_1,\ldots,\tau_m)$ and rotations $R = (\gamma_1,\ldots,\gamma_m)$. To address any potential ambiguity in the global trajectory, we also formulate the global trajectory predictor using the CVAE:
+
+\begin{equation}
+\Psi = \mathcal{T}(\Theta,v), \tag{3}
+\end{equation}
+
+\begin{equation}
+(T, R) = \text{EgoToGlobal}(\Psi), \tag{4}
+\end{equation}
+
+where the global trajectory predictor $\mathcal{T}$ corresponds to the CVAE decoder and $v$ is the latent code for the CVAE. In Eq. (3), the immediate output of the global trajectory predictor $\mathcal{T}$ is an egocentric trajectory $\Psi = (\psi_1,\ldots,\psi_m)$, which by design can be converted to a global trajectory $(T, R)$ using the conversion function EgoToGlobal.
+
+\section*{Egocentric Trajectory Representation}
+The egocentric trajectory $\Psi$ is just an alternative representation of the global trajectory $(T, R)$. It converts the global trajectory into relative local differences and represents rotations and translations in the heading coordinates ($y$-axis aligned with the heading, i.e., the person's facing direction). In this way, the egocentric representation is invariant of the absolute $xy$ translation and heading. It is more suitable for the prediction of long trajectories, since the network only needs to output the local trajectory change of every frame instead of the potentially large global trajectory offset.
+
+The conversion from the global trajectory to the egocentric trajectory is given by another function: $\Psi = \text{GlobalToEgo}(T, R)$, which is the inverse of the function EgoToGlobal. In particular, the egocentric trajectory $\psi_t = (\delta x_t, \delta y_t, z_t, \delta\phi_t, \eta_t)$ at time $t$ is:
+
+\begin{align}
+(\delta x_t, \delta y_t) &= \text{ToHeading}(\tau^{xy}*t - \tau^{xy}*{t-1}), \tag{5} \\
+z_t &= \tau^z_t, \quad \delta\phi_t = \gamma^h_t - \gamma^h_{t-1}, \tag{6} \\
+\eta_t &= \text{ToHeading}(\gamma_t), \tag{7}
+\end{align}
+
+where $\tau^{xy}_t$ is the $xy$ component of the translation $\tau_t$, $\tau^z_t$ is the $z$ component (height) of $\tau_t$, $\gamma^h_t$ is the heading angle of the rotation $\gamma_t$. ToHeading is a function that converts translations and rotations to heading coordinates defined by the heading $\gamma^h_t$, and $\eta_t$ is the local rotation. As an exception, $(\delta x_0, \delta y_0)$ and $\delta\phi_0$ are used to store the initial $xy$ translation $\tau^{xy}_0$ and heading $\gamma^h_0$. These initial values are set to the GT during training and arbitrary values during inference (as the trajectory can start from any position and heading). The inverse process of Eq. (5)-(7) defines the inverse conversion EgoToGlobal used in Eq. (4), which accumulates the egocentric trajectory to obtain the global trajectory. To correct potential drifts in the trajectory, in Sec. 3.3, we will optimize the global trajectory of each person to match the video evidence, which also includes a smoothing point $(\delta x_0, \delta y_0, \delta\phi_0)$. More details about the egocentric trajectory are given in Appendix D.
+
