@@ -205,6 +205,19 @@ install_qt() {
     return 0
 }
 
+# 安装Papirus图标主题
+install_icon_theme() {
+    sudo add-apt-repository ppa:varlesh-l/papirus-pack
+    sudo apt-get update
+    sudo apt-get install papirus-gtk-icon-theme
+
+    sudo add-apt-repository ppa:varlesh-l/papirus-pack
+    sudo apt-get update
+    sudo apt-get install papirus-pack-kde5
+}
+
+
+
 # 安装其他软件
 install_other_software() {
     log_info "开始安装其他软件..."
