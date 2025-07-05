@@ -1,14 +1,12 @@
 
-# Paper Tools
+# 日常工具合集
 
 ## 环境配置
 
-On Windows， using VsCode + Git Bash Terminal + MiniConda/MicroConda/Anaconda
-
-Launch IPython:
-```
-uvx ipython
-```
+在Windows上使用：
+- VsCode 
+- Git Bash Terminal 
+- MiniConda/Micromamba/Anaconda
 
 ## 运行
 
@@ -24,12 +22,12 @@ python tools/pyscenedetect_clip.py INPUT_VID OUTPUT_DIR --threshold 6 --min-scen
 
 去除图片白边
 ```
-python tools/images/cut_white.py INPUT_IMG OUT_IMg
+python tools/images/cut_white.py INPUT_IMG OUT_IMG
 ```
 
 图片阵列
 ```
-python tools/images/create_grid.py "aaa" -r 6 -c 8
+python tools/images/create_grid.py INPUT_DIR -r 6 -c 8
 ```
 
 图片爬虫
