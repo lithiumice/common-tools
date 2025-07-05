@@ -1,7 +1,7 @@
 
 # Paper Tools
 
-## ENV
+## 环境配置
 
 On Windows， using VsCode + Git Bash Terminal + MiniConda/MicroConda/Anaconda
 
@@ -10,35 +10,29 @@ Launch IPython:
 uvx ipython
 ```
 
-## Run
+## 运行
 
-compress folder into zip file
+压缩文件夹
 ```
-python tools\compress_folder.py
-```
-
-segment video into clips
-```
-python tools\pyscenedetect_clip.py input_video output --threshold 6 --min-scene-len 10 --save-thumbnails
+python tools/compress_folder.py
 ```
 
-cut image white boarder
+分割视频
 ```
-python tools/images/cut_white.py "aaa" bbb
+python tools/pyscenedetect_clip.py INPUT_VID OUTPUT_DIR --threshold 6 --min-scene-len 10 --save-thumbnails
 ```
 
-create paper image grid
+去除图片白边
+```
+python tools/images/cut_white.py INPUT_IMG OUT_IMg
+```
+
+图片阵列
 ```
 python tools/images/create_grid.py "aaa" -r 6 -c 8
 ```
 
-pictures scrawper
+图片爬虫
 ```
-pip install bs4 requests
-python "tools\banfo_biaoqingbao.py"
-```
-
-```
-cd src/sync_code/RLM/audio_streamer/
-python audio_streamer.py
+python "tools/banfo_biaoqingbao.py"
 ```
