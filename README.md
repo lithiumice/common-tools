@@ -34,3 +34,22 @@ python tools/images/create_grid.py INPUT_DIR -r 6 -c 8
 ```
 python "tools/banfo_biaoqingbao.py"
 ```
+
+### Ubuntu 系统配置
+
+先clone再运行
+```
+# 基本软件
+sudo bash scripts/system_setting/install_ubuntu_software.sh
+
+sudo bash scripts/system_setting/cuda_installer.sh
+
+# 切换成清华源
+sudo bash scripts/system_setting/switch_apt_source.sh
+```
+
+
+在不clone仓库的前提下使用bash脚本
+```
+bash <(curl -s https://raw.githubusercontent.com/lithiumice/common-tools/main/scripts/system_setting/install_ubuntu_software.sh)
+```
