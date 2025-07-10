@@ -46,7 +46,7 @@ update_system() {
 # 安装基本工具
 install_base_tools() {
     log_info "开始安装基本工具..."
-    sudo apt install -y build-essential curl wget git vim nano htop unzip zip tar screen tmux software-properties-common apt-transport-https ca-certificates lsb-release
+    sudo apt install -y build-essential curl wget git vim nano htop unzip zip tar screen tmux software-properties-common apt-transport-https ca-certificates lsb-release kazam
     if ! check_status "基本工具安装"; then return 1; fi
     return 0
 }
