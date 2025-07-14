@@ -42,6 +42,7 @@ python "tools/banfo_biaoqingbao.py"
 # 基本软件
 sudo bash scripts/system_setting/install_ubuntu_software.sh
 
+# 安装CUDA
 sudo bash scripts/system_setting/cuda_installer.sh
 
 # 切换成清华源
@@ -51,5 +52,9 @@ sudo bash scripts/system_setting/switch_apt_source.sh
 
 在不clone仓库的前提下使用bash脚本
 ```
+# 更新源
+bash <(curl -s https://raw.githubusercontent.com/lithiumice/common-tools/main/scripts/system_setting/switch_apt_source.sh)
+
+# 安装常用软件
 bash <(curl -s https://raw.githubusercontent.com/lithiumice/common-tools/main/scripts/system_setting/install_ubuntu_software.sh)
 ```
