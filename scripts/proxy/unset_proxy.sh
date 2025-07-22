@@ -26,20 +26,3 @@ proxy_off() {
 
     echo "代理已关闭"
 }
-
-proxy_off() {
-    export http_proxy=
-    export https_proxy=
-    export ftp_proxy=
-    export all_proxy=
-    export no_proxy=
-
-    export ALL_PROXY=
-    export HTTPS_PROXY=
-    export HTTP_PROXY=
-    export FTP_PROXY=
-    export ALL_PROXY=
-    export NO_PROXY=
-
-    echo "代理已关闭"
-}

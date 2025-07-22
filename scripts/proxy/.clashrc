@@ -1,0 +1,46 @@
+# 访问指定地址时不使用代理，可以用逗号分隔多个地址
+export no_proxy=localhost,127.0.0.0/8,*.local 
+export NO_PROXY=localhost,127.0.0.0/8,*.local
+# 代理服务器IP
+export PX=172.22.131.56:7897 # LOCAL
+; export all_proxy=socks://$PX/
+; export ALL_PROXY=socks://$PX/
+export http_proxy=http://$PX
+export HTTP_PROXY=http://$PX
+export ftp_proxy=http://$PX
+export FTP_PROXY=http://$PX
+export https_proxy=http://$PX
+export HTTPS_PROXY=http://$PX
+
+
+git config --global http.https://github.com.proxy http://172.22.131.56:7897
+git config --global https.https://github.com.proxy https://172.22.131.56:7897
+
+proxy_off() {
+    export http_proxy=
+    export https_proxy=
+    export ftp_proxy=
+    export all_proxy=
+    export no_proxy=
+
+    export ALL_PROXY=
+    export HTTPS_PROXY=
+    export HTTP_PROXY=
+    export FTP_PROXY=
+    export ALL_PROXY=
+    export NO_PROXY=
+
+    unset http_proxy
+    unset https_proxy
+    unset ftp_proxy
+    unset all_proxy
+    unset no_proxy
+    unset ALL_PROXY
+    unset HTTPS_PROXY
+    unset HTTP_PROXY
+    unset FTP_PROXY
+    unset ALL_PROXY
+    unset NO_PROXY
+
+    echo "代理已关闭"
+}
