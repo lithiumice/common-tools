@@ -3,8 +3,8 @@ export no_proxy=localhost,127.0.0.0/8,*.local
 export NO_PROXY=localhost,127.0.0.0/8,*.local
 
 # 代理服务器IP
-export PX=127.0.0.1:7895
-export PX=172.22.131.56:7897 # LOCAL
+export PX=127.0.0.1:7895 # on local machine
+export PX=172.22.131.56:7897 # on remote server
 
 export http_proxy=http://$PX
 export HTTP_PROXY=http://$PX
@@ -13,8 +13,9 @@ export FTP_PROXY=http://$PX
 export https_proxy=http://$PX
 export HTTPS_PROXY=http://$PX
 
-# export all_proxy=socks://$PX/
-# export ALL_PROXY=socks://$PX/
+export all_proxy=
+export ALL_PROXY=
+
 
 git config --global http.https://github.com.proxy http://172.22.131.56:7897
 git config --global https.https://github.com.proxy https://172.22.131.56:7897
